@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Nearby Theaters</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+    <style>
+        /* Style for the page background */
+        body {
+            background-color: orange;
+        }
+
+        /* Style for the map container */
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Nearby Theaters</h1>
+    <div id="map"></div>
+
+    <script>
+        function initMap() {
+            const map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: YOUR_LATITUDE, lng: YOUR_LONGITUDE },
+                zoom: 15,
+            });
+
+            const request = {
+                location: map.getCenter(),
+                radius: 1000, // Adjust this radius as needed
+                type: 'movie_theater', // You can change the type to 'theater' for broader results
+            };
+
+            const service = new google.maps.places.PlacesService(map);
+            service.nearbySearch(request, (results, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    for (const place of results) {
+                        const marker = new google.maps.Marker({
+                            map,
+                            position: place.geometry.location,
+                            title: place.name,
+                        });
+                    }
+                }
+            });
+        }
+
+        // Ensure the Google Maps API is loaded before calling initMap
+        google.maps.event.addDomListener(window, 'load', initMap);
+    </script>
+</body>
+</html>

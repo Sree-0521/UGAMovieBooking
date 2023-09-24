@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Nearby Theaters</title>
+    <style>
+        /* Add your CSS styles here */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Find Nearby Theaters</h2>
+        <input type="text" id="zipcode" placeholder="Enter ZIP code">
+        <button id="search">Search</button>
+        <div id="results"></div>
+    </div>
+    <script>
+        function initMap() {
+            const map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 40.7128, lng: -74.0060 }, // Default to New York
+                zoom: 10,
+            });
+
+            const searchButton = document.getElementById("search");
+            searchButton.addEventListener("click", () => {
+                const zipcode = document.getElementById("zipcode").value;
+                findNearbyTheaters(map, zipcode);
+            });
+        }
+
+        function findNearbyTheaters(map, zipcode) {
+            const request = {
+                location: new google.maps.LatLng(40.7128, -74.0060), // Default to New York
+                radius: 50000, // Adjust the radius as needed (in meters)
+                keyword: "movie theater",
+            };
+
+            const placesService = new google.maps.places.PlacesService(map);
+            placesService.nearbySearch(request, (results, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    displayResults(results);
+                } else {
+                    alert("Error fetching theaters. Please try again later.");
+                }
+            });
+        }
+
+        function displayResults(results) {
+            const resultsContainer = document.getElementById("results");
+            resultsContainer.innerHTML = "";
+
+            if (results.length === 0) {
+                resultsContainer.innerHTML = "<p>No theaters found nearby.</p>";
+            } else {
+                results.forEach((place) => {
+                    const name = place.name;
+                    const address = place.vicinity;
+
+                    const theaterDiv = document.createElement("div");
+                    theaterDiv.className = "theater";
+                    theaterDiv.innerHTML = `<strong>${name}</strong><br>${address}`;
+                    resultsContainer.appendChild(theaterDiv);
+                });
+            }
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initMap" async defer></script>
+</body>
+</html>
